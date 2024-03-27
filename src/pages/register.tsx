@@ -24,8 +24,10 @@ export default function Register() {
         if (response.ok) {
             const data = await response.json();
             localStorage.setItem('username', data.username); // Save username in localStorage
-            toast.success('Registered successfully');
-            setTimeout(() => router.push('/'), 500); // Delay for toast to be seen
+            toast.success('Registered successfully', {
+                onClose: () => router.push('/'), // Redirect after the toast is dismissed
+                autoClose: 3000, // Adjust based on your preference
+            });
         } else {
             toast.error('Registration failed');
         }
