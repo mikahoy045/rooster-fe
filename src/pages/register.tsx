@@ -11,8 +11,6 @@ export default function Register() {
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Simulated API call
-        // Replace this with your actual register API call
         const response = await fetch(`${process.env.NEXT_PUBLIC_BE_URL}/api/auth/register`, {
             method: 'POST',
             headers: {
@@ -25,8 +23,8 @@ export default function Register() {
             const data = await response.json();
             localStorage.setItem('username', data.username); // Save username in localStorage
             toast.success('Registered successfully', {
-                onClose: () => router.push('/'), // Redirect after the toast is dismissed
-                autoClose: 3000, // Adjust based on your preference
+                onClose: () => router.push('/'),
+                autoClose: 3000,
             });
         } else {
             toast.error('Registration failed');

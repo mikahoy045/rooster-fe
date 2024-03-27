@@ -30,6 +30,8 @@ const Home = () => {
         if (node) observer.current.observe(node);
     }, [isLoading, hasMore]);
 
+    const username = typeof window !== 'undefined' ? localStorage.getItem('username') : null;
+
     useEffect(() => {
         const abortController = new AbortController();
         const signal = abortController.signal;
@@ -68,9 +70,9 @@ const Home = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 justify-items-center">
                 {books.map((book, index) => {
                     if (books.length === index + 1) {
-                        return <div ref={lastBookElementRef} key={book.book_id}><BookCard book={book} username={""} /></div>;
+                        return <div ref={lastBookElementRef} key={book.book_id}><BookCard book={book} username={username || ""} /></div>;
                     } else {
-                        return <BookCard key={`${book.book_id}-${index}`} book={book} username={""} />;
+                        return <BookCard key={`${book.book_id}-${index}`} book={book} username={username || ""} />;
                     }
                 })}
             </div>

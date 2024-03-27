@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { toast } from 'react-toastify'; // Ensure you have 'react-toastify' installed
+import { toast } from 'react-toastify';
 
 interface Book {
     book_id: number;
@@ -15,21 +15,42 @@ interface Book {
 const BookCard = ({ book, username }: { book: Book, username: string | null }) => {
     const router = useRouter();
 
-    const handleBuyClick = () => {
+    const handleBuyClick = async () => {
         if (!username) {
-            // Redirect to login page if not logged in
             router.push('/login');
         } else {
-            // Show success toast notification if logged in
-            toast.success('Purchase successful!', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-            });
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_BE_URL}/api/order/buy`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        items: [{ bookId: book.book_id, quantity: 1 }]
+                    }),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    toast.success(`Order placed successfully! Order ID: ${data.orderId}`, {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                    });
+                } else {
+                    const errorData = await response.json();
+                    toast.error(errorData.message || 'Failed to place order');
+                }
+            } catch (error) {
+                // Handle network errors
+                console.error("Failed to place order:", error);
+                toast.error('Failed to place order due to network error');
+            }
         }
     };
 
